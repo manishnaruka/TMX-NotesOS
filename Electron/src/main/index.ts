@@ -1,7 +1,59 @@
 import { app, BrowserWindow, shell, Menu, nativeImage } from 'electron'
-import { join } from 'path'
+import { join, extname } from 'path'
+import { createServer } from 'http'
+import { readFile } from 'fs/promises'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { registerIpcHandlers } from './ipc-handlers'
+
+const MIME_TYPES: Record<string, string> = {
+  '.html': 'text/html',
+  '.js': 'application/javascript',
+  '.css': 'text/css',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.map': 'application/json'
+}
+
+let serverPort = 0
+
+function startLocalServer(): Promise<number> {
+  return new Promise((resolve) => {
+    const rendererDir = join(__dirname, '../renderer')
+    const server = createServer(async (req, res) => {
+      let filePath = join(rendererDir, req.url === '/' ? 'index.html' : req.url || 'index.html')
+
+      try {
+        const data = await readFile(filePath)
+        const mimeType = MIME_TYPES[extname(filePath)] || 'application/octet-stream'
+        res.writeHead(200, { 'Content-Type': mimeType })
+        res.end(data)
+      } catch {
+        // SPA fallback — serve index.html for client-side routes
+        try {
+          const indexData = await readFile(join(rendererDir, 'index.html'))
+          res.writeHead(200, { 'Content-Type': 'text/html' })
+          res.end(indexData)
+        } catch {
+          res.writeHead(404)
+          res.end('Not found')
+        }
+      }
+    })
+
+    server.listen(0, 'localhost', () => {
+      const addr = server.address()
+      const port = typeof addr === 'object' && addr ? addr.port : 0
+      resolve(port)
+    })
+  })
+}
 
 function createWindow(): void {
   const icon = nativeImage.createFromPath(join(__dirname, '../../resources/icon.png'))
@@ -32,9 +84,10 @@ function createWindow(): void {
           ...details.responseHeaders,
           'Content-Security-Policy': [
             "default-src 'self'; " +
-              "script-src 'self'; " +
+              "script-src 'self' 'unsafe-inline' https://apis.google.com https://*.firebaseapp.com; " +
               "style-src 'self' 'unsafe-inline'; " +
-              "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; " +
+              "frame-src 'self' https://*.firebaseapp.com https://accounts.google.com https://*.googleapis.com; " +
+              "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://apis.google.com; " +
               "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.googleusercontent.com; " +
               "font-src 'self' data:;"
           ]
@@ -66,7 +119,8 @@ function createWindow(): void {
           autoHideMenuBar: true,
           webPreferences: {
             nodeIntegration: false,
-            contextIsolation: true
+            contextIsolation: true,
+            sandbox: false
           }
         }
       }
@@ -78,12 +132,18 @@ function createWindow(): void {
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    mainWindow.loadURL(`http://localhost:${serverPort}/index.html`)
   }
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.tmx.notes')
+
+  // Start local server in production so the app has an http:// origin
+  // Firebase signInWithPopup rejects file:// and custom protocol origins
+  if (!is.dev) {
+    serverPort = await startLocalServer()
+  }
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
