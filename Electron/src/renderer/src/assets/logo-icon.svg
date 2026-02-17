@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="28" dy="28" stdDeviation="12" flood-color="#141821" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Paper card -->
+  <rect x="133" y="133" width="758" height="758" rx="120" fill="#ffffff" stroke="#141821" stroke-width="20" filter="url(#shadow)"/>
+
+  <!-- Folded corner -->
+  <path d="M 711 133 L 891 133 L 891 313 Z" fill="#f5f6f8" stroke="#141821" stroke-width="16" />
+  <path d="M 711 133 L 891 313" stroke="#141821" stroke-width="16" />
+
+  <!-- Note lines -->
+  <line x1="275" y1="320" x2="755" y2="320" stroke="#141821" stroke-width="22" stroke-linecap="round"/>
+  <line x1="275" y1="422" x2="690" y2="422" stroke="#141821" stroke-width="22" stroke-linecap="round"/>
+  <line x1="275" y1="524" x2="625" y2="524" stroke="#141821" stroke-width="22" stroke-linecap="round"/>
+
+  <!-- Check badge -->
+  <circle cx="330" cy="760" r="118" fill="#ffffff" stroke="#141821" stroke-width="20"/>
+  <path d="M 282 760 L 316 796 L 392 712" fill="none" stroke="#141821" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
