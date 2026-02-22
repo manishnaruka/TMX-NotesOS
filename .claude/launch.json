@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "TMX Notes — Dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "Electron", "run", "dev"],
+      "port": 5173
+    },
+    {
+      "name": "TMX Notes — Preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "Electron", "run", "preview"],
+      "port": 4173
+    }
+  ]
+}
