@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "732725420392",
+    "project_id": "tmx-eb3b3",
+    "storage_bucket": "tmx-eb3b3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732725420392:android:7300021572748bcc7136dd",
+        "android_client_info": {
+          "package_name": "com.techmixins.tmxnotes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732725420392-j551mjpggdglhb9tesehrtr724f1lokd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8nwAFGhkaZUAUYUaIV1FP-Gr4c81DjtI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732725420392-j551mjpggdglhb9tesehrtr724f1lokd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "732725420392-7gfas23n4vrqn86dnimo0us29tivs2so.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.techmixins.tmxnotes"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
