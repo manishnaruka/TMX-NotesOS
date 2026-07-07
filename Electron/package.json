@@ -13,6 +13,7 @@
     "url": "https://github.com/manishnaruka/TMX-NotesOS.git"
   },
   "scripts": {
+    "clean": "node ./scripts/clean-build.mjs",
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
@@ -20,7 +21,10 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "npm run build && electron-builder --mac",
     "build:mac:universal": "npm run build && electron-builder --mac --universal",
-    "build:linux": "npm run build && electron-builder --linux",
+    "build:linux": "npm run clean && npm run typecheck && npm run build && electron-builder --linux --x64",
+    "build:linux:rpm": "npm run clean && npm run typecheck && npm run build && electron-builder --linux rpm --x64",
+    "install:linux": "node ./scripts/install-linux-desktop.mjs",
+    "build:linux:install": "npm run build:linux && npm run install:linux",
     "build:all": "npm run build && electron-builder --win --mac --linux",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
@@ -65,6 +69,8 @@
       "buildResources": "resources",
       "output": "build"
     },
+    "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+    "asar": true,
     "files": [
       "out/**/*"
     ],
@@ -91,11 +97,35 @@
     },
     "linux": {
       "target": [
-        "AppImage",
-        "deb"
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64"
+          ]
+        }
       ],
-      "icon": "resources/icon.png",
-      "category": "Office"
+      "icon": "icon.png",
+      "category": "Office",
+      "synopsis": "A secure desktop notes app with Firebase sync",
+      "maintainer": "TMX <manishnaruka123@gmail.com>",
+      "vendor": "TMX",
+      "desktop": {
+        "entry": {
+          "StartupWMClass": "tmx-notes"
+        }
+      }
     }
   }
 }

@@ -109,8 +109,11 @@ npm run build:win
 # macOS (.dmg + .zip)
 npm run build:mac
 
-# Linux (.AppImage + .deb)
+# Linux (.AppImage + .deb + .tar.gz)
 npm run build:linux
+
+# Optional Linux RPM (requires rpmbuild/rpm installed)
+npm run build:linux:rpm
 
 # All platforms
 npm run build:all
